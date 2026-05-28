@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 
 // 👉 QUAN TRỌNG: Kiểm tra lại cổng này có đúng với cổng Swagger C# của ông không nhé!
-const API_BASE = "https://localhost:7094/api";
+const API_BASE = import.meta.env.VITE_API_URL;
 
 // =========================================================================
 // COMPONENT: MÀN HÌNH LOGIN 

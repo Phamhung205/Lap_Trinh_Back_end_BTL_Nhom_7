@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { GraduationCap, Database, Plus, Medal, CheckCircle2, XCircle, Clock, Gauge } from 'lucide-react';
 
-const API_BASE = "https://localhost:7094/api";
+const API_BASE = import.meta.env.VITE_API_URL;
 
 const DucTraining = () => {
   const [courses, setCourses] = useState([]);
