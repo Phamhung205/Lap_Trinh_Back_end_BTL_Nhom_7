@@ -6,7 +6,7 @@ import {
   ArrowRightLeft, TrainTrack, GaugeCircle, CheckSquare,
   ArrowUpRight, Users, CheckCircle2, AlertCircle, FileText,
   Bell, RefreshCw, Wallet, Receipt, TrendingUp, BarChart3, ChevronRight, BookOpen,
-  Lock, Mail, ArrowRight, LogOut
+  Lock, Mail, ArrowRight, LogOut, Menu, X
 } from 'lucide-react';
 
 // 👉 QUAN TRỌNG: Kiểm tra lại cổng này có đúng với cổng Swagger C# của ông không nhé!
@@ -140,12 +140,15 @@ const LoginPage = ({ onLogin }) => {
 // =========================================================================
 // COMPONENT: SIDEBAR
 // =========================================================================
-const Sidebar = ({ activeTab, setActiveTab, onLogout, currentUser }) => {
+const Sidebar = ({ activeTab, setActiveTab, onLogout, currentUser, isMobileOpen, onClose }) => {
   const NavItem = ({ id, icon: Icon, label, badge }) => {
     const isActive = activeTab === id;
     return (
       <button 
-        onClick={() => setActiveTab(id)}
+        onClick={() => {
+          setActiveTab(id);
+          onClose?.();
+        }}
         className={`w-full flex items-center gap-4 px-5 py-3 rounded-2xl transition-all ${
           isActive 
             ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-900/50 transform scale-[1.02]' 
@@ -164,15 +167,20 @@ const Sidebar = ({ activeTab, setActiveTab, onLogout, currentUser }) => {
   };
 
   return (
-    <aside className="w-72 bg-slate-900 text-slate-300 flex flex-col shadow-2xl z-20 relative overflow-hidden flex-shrink-0">
+    <aside className={`fixed inset-y-0 left-0 w-72 bg-slate-900 text-slate-300 flex flex-col shadow-2xl z-30 overflow-hidden flex-shrink-0 transform transition-transform duration-300 lg:static lg:translate-x-0 lg:z-20 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}`}>
       <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-blue-600/20 to-transparent pointer-events-none"></div>
       
       <div className="p-8 relative z-10 border-b border-slate-800/50">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-2.5 rounded-xl shadow-lg shadow-blue-500/30">
-            <Car className="text-white" size={24} />
+        <div className="flex items-center justify-between gap-3 mb-2">
+          <div className="flex items-center gap-3">
+            <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-2.5 rounded-xl shadow-lg shadow-blue-500/30">
+              <Car className="text-white" size={24} />
+            </div>
+            <h1 className="text-2xl font-black text-white tracking-tight">PHMCAR<span className="text-blue-400"> DNU</span></h1>
           </div>
-          <h1 className="text-2xl font-black text-white tracking-tight">PHMCAR<span className="text-blue-400"> DNU</span></h1>
+          <button onClick={onClose} className="lg:hidden text-slate-300 hover:text-white p-2" aria-label="Đóng menu">
+            <X size={20} />
+          </button>
         </div>
         <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Trung Tâm Đào Tạo</p>
       </div>
@@ -426,7 +434,8 @@ const BookingTab = ({ data, refreshMain }) => {
           <h3 className="font-bold text-lg text-slate-800">Danh sách Lịch tập (Từ SQL Server)</h3>
           <span className="text-xs bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full font-bold flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div> Live</span>
         </div>
-        <table className="w-full text-left">
+        <div className="overflow-x-auto">
+        <table className="w-full min-w-[760px] text-left">
           <thead className="bg-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
             <tr>
               <th className="px-6 py-4">Học Viên / Mã</th>
@@ -465,6 +474,7 @@ const BookingTab = ({ data, refreshMain }) => {
             {(!data.bookings || data.bookings.length === 0) && <tr><td colSpan="4" className="px-6 py-8 text-center text-slate-400 font-medium">Chưa có dữ liệu từ Database. Hãy điền form bên trái để đặt lịch!</td></tr>}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );
@@ -625,7 +635,7 @@ const TrainingTab = ({ data, refreshMain }) => {
               <label className="block text-xs font-bold text-slate-400 uppercase mb-1">Tên Khóa Học</label>
               <input type="text" value={newCourse.name} onChange={e => setNewCourse({...newCourse, name: e.target.value})} placeholder="VD: Hạng B2 Tiêu Chuẩn" className="w-full bg-slate-50 p-3 rounded-xl outline-none focus:ring-2 focus:ring-purple-500 font-bold text-sm" />
             </div>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label className="block text-xs font-bold text-slate-400 uppercase mb-1">Giá Tiền (VNĐ)</label>
                 <input type="number" value={newCourse.price} onChange={e => setNewCourse({...newCourse, price: e.target.value})} placeholder="15000000" className="w-full bg-slate-50 p-3 rounded-xl outline-none focus:ring-2 focus:ring-purple-500 font-bold text-sm" />
@@ -723,15 +733,17 @@ const FacilitiesTab = () => {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      <div className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
+      <div className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h3 className="font-bold text-xl text-slate-800">Sơ Đồ Sa Hình Liên Hoàn</h3>
           <p className="text-sm text-slate-500 mt-1">Hệ thống sa hình đạt chuẩn ISO 9001 - Bộ GTVT</p>
         </div>
-        <div className="flex bg-slate-100 p-1.5 rounded-2xl">
+        <div className="w-full md:w-auto overflow-x-auto">
+          <div className="flex bg-slate-100 p-1.5 rounded-2xl min-w-max">
           {['B1', 'B2', 'C'].map(type => (
-            <button key={type} onClick={() => setLicenseType(type)} className={`px-8 py-3 rounded-xl font-bold text-sm transition-all ${licenseType === type ? 'bg-white text-orange-600 shadow-md transform scale-105' : 'text-slate-500 hover:text-slate-700'}`}>Hạng {type}</button>
+            <button key={type} onClick={() => setLicenseType(type)} className={`px-5 sm:px-8 py-3 rounded-xl font-bold text-sm transition-all ${licenseType === type ? 'bg-white text-orange-600 shadow-md transform scale-105' : 'text-slate-500 hover:text-slate-700'}`}>Hạng {type}</button>
           ))}
+          </div>
         </div>
       </div>
       <div className="bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm">
@@ -805,7 +817,8 @@ const FinanceTab = ({ data, refreshMain }) => {
       </div>
       <div className="bg-white rounded-[32px] border border-slate-100 shadow-sm overflow-hidden p-6">
         <h3 className="font-bold text-lg mb-6 text-slate-800">Danh Sách Công Nợ (Từ SQL Server)</h3>
-        <table className="w-full text-left border-collapse">
+        <div className="overflow-x-auto">
+        <table className="w-full min-w-[680px] text-left border-collapse">
           <thead className="bg-slate-50 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
             <tr><th className="px-4 py-3">Học Viên</th><th className="px-4 py-3">Tiến Độ</th><th className="px-4 py-3">Trạng Thái</th></tr>
           </thead>
@@ -827,6 +840,7 @@ const FinanceTab = ({ data, refreshMain }) => {
             })}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );
@@ -887,6 +901,7 @@ const App = () => {
 
   // Trạng thái Dashboard
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState({ vehicles: [], instructors: [], courses: [], bookings: [], tuitions: [] });
 
@@ -913,6 +928,10 @@ const App = () => {
       refreshData();
     }
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    setIsMobileSidebarOpen(false);
+  }, [activeTab]);
 
   // Handle Login & Logout
   const handleLoginSuccess = (username) => {
@@ -944,20 +963,32 @@ const App = () => {
   };
 
   return (
-    <div className="flex h-screen bg-slate-50 font-sans text-slate-800 overflow-hidden">
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} onLogout={handleLogout} currentUser={currentUser} />
-      <main className="flex-1 flex flex-col relative overflow-y-auto">
-        <header className="sticky top-0 z-10 bg-slate-50/80 backdrop-blur-md border-b border-slate-200/50 px-10 py-6 flex justify-between items-center">
+    <div className="flex min-h-screen lg:h-screen bg-slate-50 font-sans text-slate-800 overflow-x-hidden">
+      {isMobileSidebarOpen && (
+        <button
+          className="fixed inset-0 bg-slate-900/50 z-20 lg:hidden"
+          onClick={() => setIsMobileSidebarOpen(false)}
+          aria-label="Đóng menu"
+        />
+      )}
+      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} onLogout={handleLogout} currentUser={currentUser} isMobileOpen={isMobileSidebarOpen} onClose={() => setIsMobileSidebarOpen(false)} />
+      <main className="flex-1 min-w-0 flex flex-col relative overflow-y-auto">
+        <header className="sticky top-0 z-10 bg-slate-50/80 backdrop-blur-md border-b border-slate-200/50 px-4 sm:px-6 lg:px-10 py-4 sm:py-6 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
           <div>
-            <h2 className="text-2xl font-black text-slate-800 tracking-tight">{headerInfo[activeTab].title}</h2>
+            <div className="flex items-center gap-3">
+              <button onClick={() => setIsMobileSidebarOpen(true)} className="lg:hidden p-2 rounded-xl border border-slate-200 bg-white text-slate-600">
+                <Menu size={20} />
+              </button>
+              <h2 className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight">{headerInfo[activeTab].title}</h2>
+            </div>
             <p className="text-sm font-medium text-slate-500 mt-0.5">{headerInfo[activeTab].desc}</p>
           </div>
-          <button onClick={refreshData} className="bg-white text-slate-600 px-5 py-2.5 rounded-xl shadow-sm border border-slate-200 hover:text-blue-600 font-bold flex items-center gap-2">
+          <button onClick={refreshData} className="w-full sm:w-auto bg-white text-slate-600 px-5 py-2.5 rounded-xl shadow-sm border border-slate-200 hover:text-blue-600 font-bold flex items-center justify-center gap-2">
             <RefreshCw size={16} className={loading ? 'animate-spin text-blue-600' : ''} /> 
             {loading ? 'Đang tải...' : 'Làm mới Database'}
           </button>
         </header>
-        <div className="p-10">
+        <div className="p-4 sm:p-6 lg:p-10">
           {activeTab === 'dashboard' && <Dashboard data={data} />}
           {activeTab === 'booking' && <BookingTab data={data} refreshMain={refreshData} />}
           {activeTab === 'training' && <TrainingTab data={data} refreshMain={refreshData} />}
