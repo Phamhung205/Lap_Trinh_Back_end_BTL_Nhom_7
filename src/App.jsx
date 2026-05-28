@@ -92,7 +92,7 @@ const LoginPage = ({ onLogin }) => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="w-full pl-12 pr-4 py-4 bg-slate-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-bold text-slate-700 transition-all"
-                placeholder="Nhập 'ADMINHUNG'"
+                placeholder="........"
                 required
               />
             </div>
@@ -109,7 +109,7 @@ const LoginPage = ({ onLogin }) => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full pl-12 pr-4 py-4 bg-slate-50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 font-bold text-slate-700 transition-all"
-                placeholder="Nhập 'Phamhung880'"
+                placeholder="........"
                 required
               />
             </div>
